@@ -1,0 +1,255 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="./lib/foundation/css/foundation.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="./lib/css/app.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+          <h1>ICMP и утилиты тестирования сетей TCP/IP</h1>
+        </section>
+        <section>
+          <h1>ICMP</h1>
+        </section>
+        <section data-markdown>
+            <script type="text/template">
+              ##Общее представление
+              IP (Internet Protocol) использует несколько других протоколов для выполнения функций по маршрутизации и управлению:
+              * Управляющие функции (ICMP)
+              * Многоадрессовая передача (IGMP)
+              * Создание таблиц маршрутизации (RIP, OSPF, BGP, PIM, …)
+            </script>
+        </section>
+        <section data-markdown>
+            <script type="text/template">
+              ##ICMP
+              Межсетевой протокол управляющих сообщений является необходимой частью протокола IP.<br> Разработан для:
+              * Передачи сообщений об ошибках
+              * Передачи состоянии сети
+
+              ICMP сообщения инкапсулированы как IP датаграммы:
+              <img style="background: #fff" src="./lib/source.png" />
+            </script>
+        </section>
+        <section data-markdown>
+            <script type="text/template">
+              ##ICMP запрос
+              <img style="background: #fff" src="./lib/img/icmp_query.png" />
+              ICMP запрос: 
+              * Запрос от хоста к хосту или роутеру 
+              * Ответ отправлен к запросившему хосту
+            </script>
+        </section>
+        <section>
+          <h2>Типы ICMP сообщений</h2>
+          <table class="mytable" style="font-size: 20px; width: 1000px;" cellpadding="1" cellspacing="0"><col><col><tbody><tr valign="TOP"><td width="68" height="35">
+                  <p align="CENTER">
+                  Тип
+                  </p></td><td width="426">
+                  <p align="left">
+                  Описание</p></td></tr></tbody><tbody><tr valign="TOP"><td width="68" height="15">
+                  <p align="CENTER">
+                  0</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Ответ
+                  на эхо (Echo
+                  Reply)</p></td></tr><tr valign="TOP"><td width="68" height="13">
+                  <p align="CENTER">
+                  3</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Узел
+                  назначения недостижим (Destination
+                  Unreachable)</p></td></tr><tr valign="TOP"><td width="68" height="13">
+                  <p align="CENTER">
+                  4</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Подавление
+                  источника (Source
+                  Quench)</p></td></tr><tr valign="TOP"><td width="68" height="14">
+                  <p align="CENTER">
+                  5</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Перенаправление
+                  маршрута (Redirect)</p></td></tr><tr valign="TOP"><td width="68" height="13">
+                  <p align="CENTER">
+                  8</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Запрос
+                  эха (Echo
+                  Request)</p></td></tr><tr valign="TOP"><td width="68" height="13">
+                  <p align="CENTER">
+                  9</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Информация
+                  о маршрутизаторах (Router
+                  Advertisement)</p></td></tr><tr valign="TOP"><td width="68" height="13">
+                  <p align="CENTER">
+                  10</p></td><td width="426">
+                  <p align="JUSTIFY">
+                  Регистрация
+                  маршрутизатора (Router
+                  Solicitation)</p></td></tr>
+            <tr>
+              <td colspan="2" class="others">...</td>
+            </tr>
+            </tbody></table></center></span></p><p align="JUSTIFY"> 
+        </section>
+        <section data-markdown>
+            <script type="text/template">
+              ##Формат сообщения ICMP
+              <div>
+                <img style="background: #fff" src="./lib/img/icmp_format.png" />
+              </div>
+              4 byte header:
+              * Тип (1 байт): идентификация ICMP сообщения
+              * Код (1 байт): Подтип ICMP сообщения
+              * Контрольная сумма (2 байта)
+              * Если нет дополнительных данных, 4 байта заполняются нулями.
+            </script>
+        </section>
+        
+        <!-- UTILITIES -->
+        <section>
+          <h1>TCP/IP UNIX утилиты</h1>  
+        </section>
+
+        <section>
+          <h2>ping</h2>
+          <p>
+          <b>Ping</b> — утилита для проверки соединений в сетях на основе TCP/IP.
+Утилита отправляет запросы протокола ICMP указанному узлу сети и фиксирует поступающие ответы.
+          </p>
+          <pre class="fragment fade-in"><code data-trim >
+$ ping perm.hse.ru
+$ PING hse.ru (91.210.105.30) 56(84) bytes of data.
+$ 64 bytes from 91.210.105.30: icmp_seq=1 ttl=49 time=46.1 ms
+$ 64 bytes from 91.210.105.30: icmp_seq=2 ttl=49 time=46.4 ms
+$ 64 bytes from 91.210.105.30: icmp_seq=3 ttl=49 time=46.2 ms
+$ 64 bytes from 91.210.105.30: icmp_seq=4 ttl=49 time=46.2 ms
+$ 64 bytes from 91.210.105.30: icmp_seq=5 ttl=49 time=46.2 ms
+$ --- hse.ru ping statistics ---
+$ 5 packets transmitted, 5 received, 0% packet loss, time 18069ms
+$ rtt min/avg/max/mdev = 46.190/46.946/48.402/0.862 ms
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Traceroute</h2>
+          <p>
+          <b>Traceroute/Tracepath</b> — это служебная компьютерная программа, предназначенная для определения маршрутов следования данных в сетях TCP/IP. 
+          </p>
+          <pre class="fragment fade-in"><code data-trim >
+$ tracepath perm.hse.ru
+$  1?: [LOCALHOST]                                         pmtu 1500
+$  1:  192.168.1.1                                           1.778ms 
+$  1:  192.168.1.1                                           4.395ms 
+$  2:  192.168.1.1                                           1.864ms
+$  2:  10.94.94.30                                           2.712ms 
+$  3:  b2-ge-000-444.v4.saturn-internet.ru                   3.349ms 
+$  4:  85.26.206.17                                          4.404ms 
+$  5:  91.210.105.30                                        48.652ms 
+$      Resume: pmtu 1460 
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Nmap</h2>
+          <p>
+          <b>nmap</b> —  свободная утилита, предназначенная для разнообразного настраиваемого сканирования IP-сетей с любым количеством объектов, определения состояния объектов сканируемой сети. 
+          </p>
+        </section>
+        <section>
+          <h3>Nmap в действии</h3>
+          <img class="fragment fade-in" src="./lib/img/matrix.jpg" alt="">
+        </section>
+        <section>
+          <h2>Netstat</h2>
+          <p>
+          <b>netstat</b> (network statistics) — утилита командной строки выводящая на дисплей состояние TCP-соединений (как входящих, так и исходящих), таблицы маршрутизации, число сетевых интерфейсов и сетевую статистику по протоколам. 
+          </p>
+          <pre class="fragment fade-in"><code data-trim >
+$ netstat -tulpn
+$ Active Internet connections (only servers)
+$ Proto  Local Address      Foreign Address  State   PID/Program name
+...
+$ tcp    127.0.0.1:631      0.0.0.0:*        LISTEN  4355/cupsd      
+$ tcp    127.0.0.1:5432     0.0.0.0:*        LISTEN  1796/postgres   
+$ tcp    127.0.0.1:9050     0.0.0.0:*        LISTEN  2716/tor        
+$ tcp    0.0.0.0:445        0.0.0.0:*        LISTEN  1083/smbd       
+$ tcp    0.0.0.0:8000       0.0.0.0:*        LISTEN  480/grunt       
+...
+          </code></pre>
+        </section>
+        <section>
+          <h2>Netcat</h2>
+          <p>
+          <b>netcat</b> (англ. net сеть + cat) — утилита Unix, позволяющая устанавливать соединения TCP и UDP, принимать оттуда данные и передавать их. 
+          </p>
+        </section>
+        <section>
+        <h2>И множество других</h2>
+        <ul>
+          <li class="fragment fade-in">telnet</li>
+          <li class="fragment fade-in">curl</li>
+          <li class="fragment fade-in">ifconfig</li>
+          <li class="fragment fade-in">ipconfig(windows)</li>
+          <li class="fragment fade-in">...</li>
+        </ul>
+        </section>
+        <!-- END -->
+				<section>
+          <h3>Спасибо за внимание</h3>
+          <h1>Q/A</h1>
+          <p>
+            Выступали: <br>
+            Потеряев Никита <br>
+            Кетова Алена <br>
+          </p>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+        slideNumber: 'c/t',
+        controls: false,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
